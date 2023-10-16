@@ -25,7 +25,6 @@ async function scrappedata(category = 'football') {
     const url = `https://1xlite-792232.top/en/live/${category}`;
     await page.goto(url);
 
-
     // Function to scroll down the page to load more content
     const scrollDown = async () => {
         let previousHeight = 0;
@@ -45,7 +44,6 @@ async function scrappedata(category = 'football') {
     }
 
     await scrollDown();
-    // await page.pdf({ path: 'hn.pdf', format: 'A4' });
     const extractCaptionLabels = async () => {
         const captionLabels = await page.evaluate(() => {
             const captionLabelElements = Array.from(document.querySelectorAll('span.caption__label'));
@@ -189,14 +187,14 @@ app.get('/data', (req, res) => {
         res.json(data);
     } catch (error) {
         console.error(error);
-        res.status(404).json({ error: 'Data file not found' });
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 app.get('/data/clear', (req, res) => {
     fs.writeFileSync('scrapped_data.json', '[]', 'utf-8');
     res.json({ message: 'scrapped data cleared.' });
-
+});
 app.get('/1x/all', async (req, res) => {
     if (isScraping) {
         res.json({ message: 'Scraping is already in progress. Use /stop to stop continuous scraping.' });
@@ -214,23 +212,7 @@ app.get('/1x/all', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-app.get('/', async (req, res) => {
-    res.json({
-        message: {
-            "message": "Server is running. Endpoints are:",
-            "endpoints": [
-                "/start",
-                "/stop",
-                "/data",
-                "/data/clear",
-                // "/1x/all",
-                // "/1x/:category",
-                // "/xx/:category",
-                // "/x/:category"
-            ]
-        }
-    });
-});
+
 app.get('/1x/:category', async (req, res) => {
     const category = req.params.category;
 
