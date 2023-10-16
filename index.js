@@ -194,14 +194,8 @@ app.get('/data', (req, res) => {
 });
 
 app.get('/data/clear', (req, res) => {
-    try {
-        fs.writeFileSync(filePath, '[]', 'utf-8');
-        res.json({ message: 'scrapped data cleared.' });
-    } catch (err) {
-        console.error('Error writing to file:', err);
-        res.status(500).json({ error: 'Failed to clear scrapped data.' });
-    }
-});
+    fs.writeFileSync('scrapped_data.json', '[]', 'utf-8');
+    res.json({ message: 'scrapped data cleared.' });
 
 app.get('/1x/all', async (req, res) => {
     if (isScraping) {
