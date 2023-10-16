@@ -1,5 +1,6 @@
 const express = require('express');
 const axios = require('axios');
+require('dotenv').config();
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const app = express();
@@ -16,7 +17,13 @@ const categories = ['football', 'tennis'];
 
 async function scrappedata(category = 'football') {
     // Launch a headless browser
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch(
+        {
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--single-process', '--no-zygote'],
+            executablePath: process.env.NODE_ENV === 'production' ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
+
+        }
+    );
 
     // Open a new page
     const page = await browser.newPage();
@@ -43,8 +50,9 @@ async function scrappedata(category = 'football') {
             previousHeight = newHeight;
         }
     }
-    await page.pdf({ path: 'hn.pdf', format: 'A4' });
+
     await scrollDown();
+    await page.pdf({ path: 'hn.pdf', format: 'A4' });
     const extractCaptionLabels = async () => {
         const captionLabels = await page.evaluate(() => {
             const captionLabelElements = Array.from(document.querySelectorAll('span.caption__label'));
@@ -188,7 +196,7 @@ app.get('/data', (req, res) => {
         res.json(data);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(404).json({ error: 'Data file not found' });
     }
 });
 
