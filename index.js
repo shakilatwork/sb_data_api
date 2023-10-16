@@ -212,7 +212,23 @@ app.get('/1x/all', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-
+app.get('/', async (req, res) => {
+    res.json({
+        message: {
+            "message": "Server is running. Endpoints are:",
+            "endpoints": [
+                "/start",
+                "/stop",
+                "/data",
+                "/data/clear",
+                // "/1x/all",
+                // "/1x/:category",
+                // "/xx/:category",
+                // "/x/:category"
+            ]
+        }
+    });
+});
 app.get('/1x/:category', async (req, res) => {
     const category = req.params.category;
 
