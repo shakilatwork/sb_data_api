@@ -17,13 +17,7 @@ const categories = ['football', 'tennis'];
 
 async function scrappedata(category = 'football') {
     // Launch a headless browser
-    const browser = await puppeteer.launch(
-        {
-            args: ['--no-sandbox', '--disable-setuid-sandbox', '--single-process', '--no-zygote'],
-            executablePath: process.env.NODE_ENV === 'production' ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
-
-        }
-    );
+    const browser = await puppeteer.launch();
 
     // Open a new page
     const page = await browser.newPage();
@@ -52,7 +46,7 @@ async function scrappedata(category = 'football') {
     }
 
     await scrollDown();
-    await page.pdf({ path: 'hn.pdf', format: 'A4' });
+    // await page.pdf({ path: 'hn.pdf', format: 'A4' });
     const extractCaptionLabels = async () => {
         const captionLabels = await page.evaluate(() => {
             const captionLabelElements = Array.from(document.querySelectorAll('span.caption__label'));
